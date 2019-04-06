@@ -103,6 +103,7 @@ GEM
     equatable (0.5.0)
     erubi (1.8.0)
     execjs (2.7.0)
+    fabrication (2.18.0)
     faraday (0.15.4)
       multipart-post (>= 1.2, < 3)
     faraday_middleware (0.13.1)
@@ -298,6 +299,7 @@ DEPENDENCIES
   capybara (~> 2.13)
   coffee-rails (~> 4.2)
   database_cleaner
+  fabrication
   faker!
   faraday
   faraday_middleware
