@@ -22,6 +22,15 @@ gem 'coffee-rails', '~> 4.2'
 gem 'turbolinks', '~> 5'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.5'
+
+gem 'active_model_serializers'
+gem 'bcrypt'
+gem 'figaro'
+gem 'faker', :git => 'git://github.com/stympy/faker.git', :branch => 'master'
+gem 'faraday'
+gem 'faraday_middleware'
+gem 'json'
+gem 'omniauth-facebook'
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 4.0'
 # Use ActiveModel has_secure_password
@@ -39,6 +48,14 @@ gem 'bootsnap', '>= 1.1.0', require: false
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+  gem 'pry'
+  gem 'rspec-rails'
+  gem 'capybara', '~> 2.13'
+  gem 'database_cleaner'
+  gem 'selenium-webdriver'
+  gem 'shoulda-matchers', git: 'https://github.com/thoughtbot/shoulda-matchers.git', branch: 'rails-5'
+  gem 'launchy'
+  gem 'rspec-rainbow'
 end
 
 group :development do
