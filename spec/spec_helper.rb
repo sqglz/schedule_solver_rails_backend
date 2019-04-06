@@ -73,7 +73,7 @@ RSpec.configure do |config|
   # as the one that triggered the failure.
   Kernel.srand config.seed
 =end
-RSpec.configure do |config|
+  RSpec.configure do |config|
     config.formatter = 'Rainbow'
 
     config.before(:suite) do
