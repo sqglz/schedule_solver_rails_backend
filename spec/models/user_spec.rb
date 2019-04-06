@@ -103,6 +103,44 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe 'user_roles' do
+    context 'when a user is created WITHOUT user_role' do
+      let(:user) { Fabricate.build(:user, user_role: user_role) }
+
+      before { user.save }
+
+      let(:user_role) { nil }
+
+      it 'should return default :user status' do
+        expect(user.user_role).to eq('user')
+      end
+    end
+
+    context 'when a user is created WITH a user_role specified' do
+      let(:user_role1) { Fabricate(:user, user_role: 'user') }
+      let(:user_role2) { Fabricate(:user, user_role: 'worker') }
+      let(:user_role3) { Fabricate(:user, user_role: 'manager') }
+      let(:user_role4) { Fabricate(:user, user_role: 'owner') }
+      let(:user_role5) { Fabricate(:user, user_role: 'admin') }
+
+      it { expect(user_role1).to be_valid }
+      it { expect(user_role1.role?).to eq('user') }
+
+      it { expect(user_role2).to be_valid }
+      it { expect(user_role2.role?).to eq('worker') }
+
+      it { expect(user_role3).to be_valid }
+      it { expect(user_role3.role?).to eq('manager') }
+
+      it { expect(user_role4).to be_valid }
+      it { expect(user_role4.role?).to eq('owner') }
+
+      it { expect(user_role5).to be_valid }
+      it { expect(user_role5.role?).to eq('admin') }
+
+    end
+  end
+
   describe 'instance methods' do
     describe '#authenticate' do
       let(:user) { Fabricate(:user) }
