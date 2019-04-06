@@ -103,6 +103,69 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe 'worker_responsibilities' do
+    context 'when a user is created with no responsibilities' do
+      let(:user) { Fabricate(:user) }
+      let(:resps) { nil }
+
+      it 'the user is still valid' do
+        expect(user).to be_valid
+      end
+    end
+
+    context 'when a user is created with responsibilities' do
+      let!(:business) { Fabricate(:business) }
+      let(:resps) { ['Barista'] }
+      let!(:user) { Fabricate(:user) }
+
+      let(:error) { user.errors.messages[:worker_responsiblities].first }
+
+      let(:create_responsibility) { Fabricate(:responsibility, name: 'Barista') }
+
+      let(:save_user_responsibility) do
+        user.update(worker_responsibilities: resps)
+      end
+
+      describe 'and the user does not belong to a business' do
+        it 'reports error that user needs to belong to business' do
+          expect(save_user_responsibility).to eq(false)
+          expect(error).to eq('User does not belong to a business!')
+        end
+      end
+
+      describe 'and user belongs to business' do
+        let(:link_business)  do
+          Fabricate(:business_user, user: user, business: business)
+        end
+
+        context 'but Responsbility does not exist' do
+
+          before { link_business }
+
+          it 'reports error on non-existant responsibility' do
+            expect(save_user_responsibility).to eq(false)
+            expect(error).to eq(
+              'Barista Responsibility does not exist in database'
+            )
+
+            expect(user).to_not be_valid
+          end
+        end
+
+        context 'and Responsbility exists' do
+          before { link_business }
+          before { create_responsibility }
+
+          it 'user worker_responsiblity saves' do
+            expect(save_user_responsibility).to eq(true)
+
+            expect(user).to be_valid
+          end
+        end
+      end
+    end
+  end
+
   describe 'user_roles' do
     context 'when a user is created WITHOUT user_role' do
       let(:user) { Fabricate.build(:user, user_role: user_role) }
@@ -137,7 +200,6 @@ RSpec.describe User, type: :model do
 
       it { expect(user_role5).to be_valid }
       it { expect(user_role5.role?).to eq('admin') }
-
     end
   end
 

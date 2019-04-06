@@ -77,7 +77,7 @@ ActiveRecord::Schema.define(version: 2019_04_06_201700) do
     t.integer "user_role", default: 0
     t.string "username"
     t.datetime "employment_start_date"
-    t.string "worker_responsibilities", array: true
+    t.string "worker_responsibilities", default: [], array: true
   end
 
   add_foreign_key "business_users", "businesses"
