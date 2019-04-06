@@ -10,10 +10,62 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_06_175547) do
+ActiveRecord::Schema.define(version: 2019_04_06_201700) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "business_users", force: :cascade do |t|
+    t.bigint "business_id"
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["business_id"], name: "index_business_users_on_business_id"
+    t.index ["user_id"], name: "index_business_users_on_user_id"
+  end
+
+  create_table "businesses", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "responsibilities", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "shift_preferences", force: :cascade do |t|
+    t.bigint "shift_id"
+    t.bigint "user_id"
+    t.integer "answer"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["shift_id"], name: "index_shift_preferences_on_shift_id"
+    t.index ["user_id"], name: "index_shift_preferences_on_user_id"
+  end
+
+  create_table "shift_roles", force: :cascade do |t|
+    t.bigint "shift_id"
+    t.bigint "responsibility_id"
+    t.boolean "assigned"
+    t.integer "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["responsibility_id"], name: "index_shift_roles_on_responsibility_id"
+    t.index ["shift_id"], name: "index_shift_roles_on_shift_id"
+  end
+
+  create_table "shifts", force: :cascade do |t|
+    t.bigint "business_id"
+    t.string "name"
+    t.datetime "start_time"
+    t.datetime "end_time"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["business_id"], name: "index_shifts_on_business_id"
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "email"
@@ -22,6 +74,17 @@ ActiveRecord::Schema.define(version: 2019_04_06_175547) do
     t.string "last_name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "user_role", default: 0
+    t.string "username"
+    t.datetime "employment_start_date"
+    t.string "worker_responsibilities", array: true
   end
 
+  add_foreign_key "business_users", "businesses"
+  add_foreign_key "business_users", "users"
+  add_foreign_key "shift_preferences", "shifts"
+  add_foreign_key "shift_preferences", "users"
+  add_foreign_key "shift_roles", "responsibilities"
+  add_foreign_key "shift_roles", "shifts"
+  add_foreign_key "shifts", "businesses"
 end

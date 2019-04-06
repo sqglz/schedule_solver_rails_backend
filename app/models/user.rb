@@ -9,6 +9,8 @@ class User < ApplicationRecord
   # validate :password_complexity
   validate :validate_email_format
 
+  after_create :create_username
+
 private
 
   MESSAGE = 'format is invalid'.freeze
@@ -26,4 +28,10 @@ private
     errors.add :password, 'must include at least one lowercase letter, one uppercase letter, and one digit'
   end
 
+  def create_username
+    return if username.present?
+
+    self.username = email.split('@')[0].to_s
+    self.save
+  end
 end

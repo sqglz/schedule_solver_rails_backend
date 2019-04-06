@@ -68,6 +68,39 @@ RSpec.describe User, type: :model do
         it { expect(user).to be_valid }
       end
     end
+
+    context 'username' do
+      let(:user) { Fabricate(:user, email: email, username: username) }
+
+      context 'with no username specified' do
+        let(:email) {'hanzLnGretl12@yahoo.com'}
+        let(:username) { nil }
+
+        it 'creates a default username from email, if no username specified' do
+
+          expect(user).to be_valid
+          expect(user.username).to eq('hanzLnGretl12')
+        end
+      end
+
+      context 'with username specified' do
+        let(:email) {'hanzLnGretl12@yahoo.com'}
+        let(:username) { 'somethingElse~' }
+        let(:new_username) { 'somethingNew999' }
+
+        let(:call) { user.update(username: new_username) }
+
+        it 'can be created/updated' do
+
+          expect(user).to be_valid
+          expect(user.username).to eq(username)
+
+          call
+
+          expect(user.username).to eq(new_username)
+        end
+      end
+    end
   end
 
   describe 'instance methods' do
