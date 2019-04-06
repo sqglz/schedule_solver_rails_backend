@@ -2,45 +2,71 @@ require 'rails_helper'
 
 RSpec.describe User, type: :model do
   describe 'validations' do
-    let(:error_messages) { guest.errors.full_messages }
-    let(:guest) { Fabricate.build(:user, email: email) }
+    context 'email validations' do
+      let(:error_messages) { user.errors.full_messages }
+      let(:user) { Fabricate.build(:user, email: email) }
 
-    before { guest.save }
+      before { user.save }
 
-    context 'when the email has multiple `@` characters' do
-      let(:email) { 'awesome@weirdness.com@yo.com' }
+      context 'when the email has multiple `@` characters' do
+        let(:email) { 'awesome@weirdness.com@yo.com' }
 
-      it { expect(guest).to_not be_valid }
-      it { expect(error_messages).to include('Email format is invalid') }
+        it { expect(user).to_not be_valid }
+        it { expect(error_messages).to include('Email format is invalid') }
+      end
+
+      context 'when the email has an incomplete TLD' do
+        let(:email) { 'awesome@incompletetld' }
+
+        it { expect(user).to_not be_valid }
+        it { expect(error_messages).to include('Email format is invalid') }
+      end
+
+      context 'when the email has multiple subdomains' do
+        let(:email) { 'awesomeSauce123@verycompleteTLD.com.yo.com' }
+
+        it { expect(user).to be_valid }
+        it { expect(error_messages).to be_empty }
+      end
+
+      context 'when the email has a `+` character' do
+        let(:email) { 'awesome+Sauce123@gmail.com' }
+
+        it { expect(user).to be_valid }
+        it { expect(error_messages).to be_empty }
+      end
+
+      context 'when the email is `nil`' do
+        let(:email) { nil }
+
+        it { expect(user).to_not be_valid }
+        it { expect(error_messages).to include("Email can't be blank") }
+        it { expect(error_messages).to_not include('Email format is invalid') }
+      end
     end
 
-    context 'when the email has an incomplete TLD' do
-      let(:email) { 'awesome@incompletetld' }
+    context 'password validations' do
+      let(:error_messages) { user.errors.full_messages }
+      let(:user) do
+        Fabricate.build(
+          :user,
+          password: password,
+          password_confirmation: password
+        )
+      end
 
-      it { expect(guest).to_not be_valid }
-      it { expect(error_messages).to include('Email format is invalid') }
-    end
+      before { user.save }
 
-    context 'when the email has multiple subdomains' do
-      let(:email) { 'awesomeSauce123@verycompleteTLD.com.yo.com' }
+      context 'when password is under 10 characters' do
+        let(:password) { 'abc123D'}
 
-      it { expect(guest).to be_valid }
-      it { expect(error_messages).to be_empty }
-    end
+        it { expect(user).to_not be_valid }
+      end
+      context 'when password is over 10 characters' do
+        let(:password) { 'abc123D_zyd'}
 
-    context 'when the email has a `+` character' do
-      let(:email) { 'awesome+Sauce123@gmail.com' }
-
-      it { expect(guest).to be_valid }
-      it { expect(error_messages).to be_empty }
-    end
-
-    context 'when the email is `nil`' do
-      let(:email) { nil }
-
-      it { expect(guest).to_not be_valid }
-      it { expect(error_messages).to include("Email can't be blank") }
-      it { expect(error_messages).to_not include('Email format is invalid') }
+        it { expect(user).to be_valid }
+      end
     end
   end
 
