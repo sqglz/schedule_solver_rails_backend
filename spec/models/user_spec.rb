@@ -5,9 +5,7 @@ RSpec.describe User, type: :model do
     let(:error_messages) { guest.errors.full_messages }
     let(:guest) { Fabricate.build(:user, email: email) }
 
-    before { guest.valid? }
-
-    it { expect(:described_class.new).to be_valid }
+    before { guest.save }
 
     context 'when the email has multiple `@` characters' do
       let(:email) { 'awesome@weirdness.com@yo.com' }
@@ -24,14 +22,14 @@ RSpec.describe User, type: :model do
     end
 
     context 'when the email has multiple subdomains' do
-      let(:email) { 'awesome@verycompleteTLD.com.yo.com' }
+      let(:email) { 'awesomeSauce123@verycompleteTLD.com.yo.com' }
 
       it { expect(guest).to be_valid }
       it { expect(error_messages).to be_empty }
     end
 
     context 'when the email has a `+` character' do
-      let(:email) { 'awesome+great@gmail.com' }
+      let(:email) { 'awesome+Sauce123@gmail.com' }
 
       it { expect(guest).to be_valid }
       it { expect(error_messages).to be_empty }
@@ -47,10 +45,12 @@ RSpec.describe User, type: :model do
   end
 
   describe 'instance methods' do
-    let(:user) { Fabricate(:user) }
-    let(:right_password) { 'right_Password123' }
-    let(:wrong_password) { 'wrong_password' }
-    it { expect(user.authenticate(right_password)).to eq(user) }
-    it { expect(user.authenticate(wrong_password)).to eq(false) }
+    describe '#authenticate' do
+      let(:user) { Fabricate(:user) }
+      let(:right_password) { 'right_Password123' }
+      let(:wrong_password) { 'wrong_password' }
+      it { expect(user.authenticate(right_password)).to eq(user) }
+      it { expect(user.authenticate(wrong_password)).to eq(false) }
+    end
   end
 end
