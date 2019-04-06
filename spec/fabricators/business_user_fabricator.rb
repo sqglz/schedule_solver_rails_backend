@@ -1,4 +1,4 @@
 Fabricator(:business_user) do
-  business nil
-  user     nil
+  business
+  user
 end
