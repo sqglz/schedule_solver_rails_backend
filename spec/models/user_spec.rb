@@ -104,62 +104,127 @@ RSpec.describe User, type: :model do
   end
 
   describe 'worker_responsibilities' do
-    context 'when a user is created with no responsibilities' do
-      let(:user) { Fabricate(:user) }
-      let(:resps) { nil }
-
-      it 'the user is still valid' do
-        expect(user).to be_valid
-      end
-    end
-
-    context 'when a user is created with responsibilities' do
-      let!(:business) { Fabricate(:business) }
-      let(:resps) { ['Barista'] }
-      let!(:user) { Fabricate(:user) }
+    context 'when a user is created' do
 
       let(:error) { user.errors.messages[:worker_responsiblities].first }
 
-      let(:create_responsibility) { Fabricate(:responsibility, name: 'Barista') }
+      context 'with no responsibility in the DB' do
+        context 'and no responsibilities assigned' do
+          let(:user) { Fabricate(:user) }
+          let(:resps) { nil }
 
-      let(:save_user_responsibility) do
-        user.update(worker_responsibilities: resps)
+          it 'the user is still valid' do
+            expect(user).to be_valid
+          end
+        end
       end
+      context 'with a single Responsibility in the DB:' do
+        describe 'a single responsibility assignation' do
+          let!(:business) { Fabricate(:business) }
+          let(:resps) { ['Barista'] }
+          let!(:user) { Fabricate(:user) }
 
-      describe 'and the user does not belong to a business' do
-        it 'reports error that user needs to belong to business' do
-          expect(save_user_responsibility).to eq(false)
-          expect(error).to eq('User does not belong to a business!')
+          let(:create_responsibility) { Fabricate(:responsibility, name: 'Barista') }
+
+          let(:save_user_responsibility) do
+            user.update(worker_responsibilities: resps)
+          end
+
+          describe 'with no business association' do
+            it 'errors on business association' do
+              expect(save_user_responsibility).to eq(false)
+              expect(error).to eq('User does not belong to a business!')
+            end
+          end
+
+          describe 'with user belonging to business' do
+            let(:link_business)  do
+              Fabricate(:business_user, user: user, business: business)
+            end
+
+            context '(linking to non-existant Responsibility)' do
+
+              before { link_business }
+
+              it 'errors on non-existant responsibility' do
+                expect(save_user_responsibility).to eq(false)
+                expect(error).to eq(
+                  'Barista Responsibility does not exist in database'
+                )
+
+                expect(user).to be_valid
+              end
+            end
+
+            context '(linking to existing Responsibility)' do
+              before { link_business }
+              before { create_responsibility }
+
+              it 'user worker_responsiblity saves' do
+                expect(save_user_responsibility).to eq(true)
+
+                expect(user).to be_valid
+              end
+            end
+          end
         end
       end
 
-      describe 'and user belongs to business' do
-        let(:link_business)  do
-          Fabricate(:business_user, user: user, business: business)
-        end
+      context 'with multiple responsibilities in the DB' do
+        let!(:user) { Fabricate(:user_with_business) }
 
-        context 'but Responsbility does not exist' do
-
-          before { link_business }
-
-          it 'reports error on non-existant responsibility' do
-            expect(save_user_responsibility).to eq(false)
-            expect(error).to eq(
-              'Barista Responsibility does not exist in database'
-            )
-
-            expect(user).to_not be_valid
+        before do
+          3.times do |i|
+            Fabricate(:responsibility, name: %w(Barista Waiter Bartender)[i-1])
           end
         end
 
-        context 'and Responsbility exists' do
-          before { link_business }
-          before { create_responsibility }
+        describe 'a single responsibility assignation' do
+          let(:responsibility) { Responsibility.last.name }
 
-          it 'user worker_responsiblity saves' do
-            expect(save_user_responsibility).to eq(true)
+          let(:link_responsibility) do
+            user.worker_responsibilities << responsibility
+            user.save
+          end
 
-            expect(user).to be_valid
+          it 'can link using responsibilities' do
+            expect(link_responsibility).to eq(true)
+            expect(user.worker_responsibilities.count).to eq(1)
+            expect(user.worker_responsibilities.first).to eq(responsibility)
+          end
+        end
+
+        describe 'multiple responsibility assignations' do
+          context 'made incorrectly' do
+
+            before do
+              %w(Barista Waiter Janitor).each do |worker_responsiblity|
+                user.worker_responsibilities << worker_responsiblity
+              end
+            end
+
+            it 'errors out on the correct error and removes non-existant
+                worker responsibility' do
+              user.save
+
+              expect(user.worker_responsibilities.count).to eq(2)
+              expect(error).to eq('Janitor Responsibility does not exist in database')
+            end
+          end
+
+          context 'made correctly' do
+
+            before do
+              %w(Barista Waiter Bartender).each do |worker_responsiblity|
+                user.worker_responsibilities << worker_responsiblity
+              end
+            end
+
+            it 'adds all to list of user.worker_responsibilities' do
+              user.save
+
+              expect(user.worker_responsibilities.count).to eq(3)
+            end
           end
         end
       end

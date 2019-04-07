@@ -26,13 +26,13 @@ class User < ApplicationRecord
 private
 
   def responsibility_exists?
-    return add_responsibility_error() if !business
+    return add_responsibility_errors() if !business
 
-    worker_responsibilities.each do |r|
-      return true unless !business || Responsibility.where(name: r.capitalize).empty?
-
-      return add_responsibility_error(r)
+    no_records = worker_responsibilities.select do |r|
+      Responsibility.where(name: r.capitalize).empty?
     end
+
+    return no_records.empty? ? true : add_responsibility_errors(no_records)
   end
 
   def ensure_user_role
@@ -63,9 +63,12 @@ private
     self.save
   end
 
-  def add_responsibility_error(resp_name=nil)
-    if resp_name
-      errors.add(:worker_responsiblities, "#{resp_name} Responsibility does not exist in database")
+  def add_responsibility_errors(resp_names=nil)
+    if resp_names
+      resp_names.each do |resp_name|
+        self.worker_responsibilities.delete(resp_name)
+        errors.add(:worker_responsiblities, "#{resp_name} Responsibility does not exist in database")
+      end
     else
       errors.add(:worker_responsiblities, "User does not belong to a business!")
     end

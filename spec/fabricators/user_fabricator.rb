@@ -5,3 +5,10 @@ Fabricator(:user) do
   first_name            { Faker::Artist.name }
   last_name             { Faker::Name.last_name }
 end
+
+Fabricator(:user_with_business, from: :user) do
+  after_create do |user|
+    business = Fabricate(:business)
+    Fabricate(:business_user, user: user, business: business)
+  end
+end
