@@ -46,15 +46,15 @@ ActiveRecord::Schema.define(version: 2019_04_06_201700) do
     t.index ["user_id"], name: "index_shift_preferences_on_user_id"
   end
 
-  create_table "shift_roles", force: :cascade do |t|
+  create_table "shift_responsibilities", force: :cascade do |t|
     t.bigint "shift_id"
     t.bigint "responsibility_id"
     t.boolean "assigned"
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["responsibility_id"], name: "index_shift_roles_on_responsibility_id"
-    t.index ["shift_id"], name: "index_shift_roles_on_shift_id"
+    t.index ["responsibility_id"], name: "index_shift_responsibilities_on_responsibility_id"
+    t.index ["shift_id"], name: "index_shift_responsibilities_on_shift_id"
   end
 
   create_table "shifts", force: :cascade do |t|
@@ -84,7 +84,7 @@ ActiveRecord::Schema.define(version: 2019_04_06_201700) do
   add_foreign_key "business_users", "users"
   add_foreign_key "shift_preferences", "shifts"
   add_foreign_key "shift_preferences", "users"
-  add_foreign_key "shift_roles", "responsibilities"
-  add_foreign_key "shift_roles", "shifts"
+  add_foreign_key "shift_responsibilities", "responsibilities"
+  add_foreign_key "shift_responsibilities", "shifts"
   add_foreign_key "shifts", "businesses"
 end
