@@ -1,5 +1,5 @@
 Fabricator(:shift_preference) do
-  shift  nil
-  user   nil
+  shift
+  user  
   answer 1
 end

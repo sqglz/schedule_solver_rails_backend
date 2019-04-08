@@ -1,5 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe Responsibility, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  context 'fabricators' do
+    let(:responsibility) { Fabricate(:responsibility) }
+    
+    it { expect(responsibility).to be_valid }
+  end
 end

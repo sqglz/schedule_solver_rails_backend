@@ -1,3 +1,3 @@
 Fabricator(:responsibility) do
-  name "MyString"
+  name Faker::Military.air_force_rank
 end

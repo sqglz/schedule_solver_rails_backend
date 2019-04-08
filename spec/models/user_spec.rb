@@ -4,7 +4,7 @@ RSpec.describe User, type: :model do
   describe 'validations' do
     context 'email validations' do
       let(:error_messages) { user.errors.full_messages }
-      let(:user) { Fabricate.build(:user, email: email) }
+      let!(:user) { Fabricate.build(:user, email: email) }
 
       before { user.save }
 
@@ -47,7 +47,7 @@ RSpec.describe User, type: :model do
 
     context 'password validations' do
       let(:error_messages) { user.errors.full_messages }
-      let(:user) do
+      let!(:user) do
         Fabricate.build(
           :user,
           password: password,
@@ -70,7 +70,7 @@ RSpec.describe User, type: :model do
     end
 
     context 'username' do
-      let(:user) { Fabricate(:user, email: email, username: username) }
+      let!(:user) { Fabricate(:user, email: email, username: username) }
 
       context 'with no username specified' do
         let(:email) {'hanzLnGretl12@yahoo.com'}
@@ -110,7 +110,7 @@ RSpec.describe User, type: :model do
 
       context 'with no responsibility in the DB' do
         context 'and no responsibilities assigned' do
-          let(:user) { Fabricate(:user) }
+          let!(:user) { Fabricate(:user) }
           let(:resps) { nil }
 
           it 'the user is still valid' do

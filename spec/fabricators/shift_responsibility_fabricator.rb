@@ -1,6 +1,7 @@
-Fabricator(:shift_role) do
-  shift          nil
-  responsibility nil
+Fabricator(:shift_responsibility) do
+  shift
+  responsibility
+  name           nil
   assigned       false
-  user_id        1
+  user_id        nil
 end
