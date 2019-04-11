@@ -19,7 +19,7 @@ RSpec.describe 'Schedule', type: :class  do
             :sunday => []
           )
       end
-      context 'with Shifts, ShiftResponsibilities, and Users created' do
+      context 'with Shifts, ShiftAssignments, and Users created' do
         let(:shifts) { Shift.all }
         let!(:load_shifts) { Schedule.new(shifts, default) }
 
@@ -29,7 +29,7 @@ RSpec.describe 'Schedule', type: :class  do
             business = Fabricate(:business)
 
             shifts.each do |shift|
-              Responsibility.create(name: shift)
+              Assignment.create(name: shift)
             end
 
             10.times do
@@ -44,10 +44,10 @@ RSpec.describe 'Schedule', type: :class  do
 
               (0..rand(0..3)).each do |d|
                 n = d + 1
-                resp_id = Responsibility.find(n).id
-                ShiftResponsibility.create(
+                resp_id = Assignment.find(n).id
+                ShiftAssignment.create(
                   shift_id: shift.id,
-                  responsibility_id: resp_id
+                  assignment_id: resp_id
                 )
               end
             end
@@ -74,7 +74,7 @@ RSpec.describe 'Schedule', type: :class  do
             expect(load_shifts.shifts.count).to eq(10)
           end
 
-          it 'each shift stores shift responsibilities' do
+          it 'each shift stores shift assignments' do
             monday_shifts = load_shifts.monday.map{|s| s.start_day }.uniq[0]
             tuesday_shifts = load_shifts.tuesday.map{|s| s.start_day }.uniq[0]
             wednesday_shifts = load_shifts.wednesday.map{|s| s.start_day }.uniq[0]

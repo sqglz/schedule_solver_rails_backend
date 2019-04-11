@@ -15,6 +15,12 @@ ActiveRecord::Schema.define(version: 2019_04_08_161953) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "assignments", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "business_users", force: :cascade do |t|
     t.bigint "business_id"
     t.bigint "user_id"
@@ -30,10 +36,16 @@ ActiveRecord::Schema.define(version: 2019_04_08_161953) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "responsibilities", force: :cascade do |t|
-    t.string "name"
+  create_table "shift_assignments", force: :cascade do |t|
+    t.bigint "shift_id"
+    t.bigint "assignment_id"
+    t.boolean "assigned"
+    t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "name"
+    t.index ["assignment_id"], name: "index_shift_assignments_on_assignment_id"
+    t.index ["shift_id"], name: "index_shift_assignments_on_shift_id"
   end
 
   create_table "shift_preferences", force: :cascade do |t|
@@ -44,18 +56,6 @@ ActiveRecord::Schema.define(version: 2019_04_08_161953) do
     t.datetime "updated_at", null: false
     t.index ["shift_id"], name: "index_shift_preferences_on_shift_id"
     t.index ["user_id"], name: "index_shift_preferences_on_user_id"
-  end
-
-  create_table "shift_responsibilities", force: :cascade do |t|
-    t.bigint "shift_id"
-    t.bigint "responsibility_id"
-    t.boolean "assigned"
-    t.integer "user_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "name"
-    t.index ["responsibility_id"], name: "index_shift_responsibilities_on_responsibility_id"
-    t.index ["shift_id"], name: "index_shift_responsibilities_on_shift_id"
   end
 
   create_table "shifts", force: :cascade do |t|
@@ -83,9 +83,9 @@ ActiveRecord::Schema.define(version: 2019_04_08_161953) do
 
   add_foreign_key "business_users", "businesses"
   add_foreign_key "business_users", "users"
+  add_foreign_key "shift_assignments", "assignments"
+  add_foreign_key "shift_assignments", "shifts"
   add_foreign_key "shift_preferences", "shifts"
   add_foreign_key "shift_preferences", "users"
-  add_foreign_key "shift_responsibilities", "responsibilities"
-  add_foreign_key "shift_responsibilities", "shifts"
   add_foreign_key "shifts", "businesses"
 end

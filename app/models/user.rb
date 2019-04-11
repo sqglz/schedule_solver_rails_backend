@@ -29,7 +29,7 @@ private
     return add_responsibility_errors() if !business
 
     no_records = worker_responsibilities.select do |r|
-      Responsibility.where(name: r.capitalize).empty?
+      Assignment.where(name: r.capitalize).empty?
     end
 
     return no_records.empty? ? true : add_responsibility_errors(no_records)
@@ -67,7 +67,7 @@ private
     if resp_names
       resp_names.each do |resp_name|
         self.worker_responsibilities.delete(resp_name)
-        errors.add(:worker_responsiblities, "#{resp_name} Responsibility does not exist in database")
+        errors.add(:worker_responsiblities, "#{resp_name} Assignment does not exist in database")
       end
     else
       errors.add(:worker_responsiblities, "User does not belong to a business!")

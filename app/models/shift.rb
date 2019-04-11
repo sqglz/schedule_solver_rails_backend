@@ -1,11 +1,11 @@
 class Shift < ApplicationRecord
   belongs_to :business
 
-  has_many :shift_responsibilities, dependent: :destroy
-  has_many :responsibilities, through: :shift_responsibilities
+  has_many :shift_assignments, dependent: :destroy
+  has_many :assignments, through: :shift_assignments
 
   def shifts
-    shift_responsibilities
+    shift_assignments
   end
 
   def filled?
@@ -20,10 +20,10 @@ class Shift < ApplicationRecord
     return false unless user.role? == 'worker' || user.role? == 'manager'
 
     if responsibility
-      assignment = shift_responsibilities.find(responsibility.id)
+      assignment = shift_assignments.find(responsibility.id)
     elsif assignment
-      respo = responsibilities.select{|r| r.name == assignment.downcase.capitalize }
-      assignment = shift_responsibilities.find_by(responsibility_id: respo.id)
+      respo = assignments.select{|r| r.name == assignment.downcase.capitalize }
+      assignment = shift_assignments.find_by(assignment_id: respo.id)
     end
 
     assignment.user_id = user.id

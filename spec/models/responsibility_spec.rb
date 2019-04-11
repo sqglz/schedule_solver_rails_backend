@@ -1,9 +1,9 @@
 require 'rails_helper'
 
-RSpec.describe Responsibility, type: :model do
+RSpec.describe Assignment, type: :model do
   context 'fabricators' do
-    let(:responsibility) { Fabricate(:responsibility) }
-    
-    it { expect(responsibility).to be_valid }
+    let(:assignment) { Fabricate(:assignment) }
+
+    it { expect(assignment).to be_valid }
   end
 end

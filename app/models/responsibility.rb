@@ -1,2 +1,0 @@
-class Responsibility < ApplicationRecord
-end

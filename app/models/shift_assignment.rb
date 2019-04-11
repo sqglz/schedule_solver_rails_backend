@@ -1,9 +1,9 @@
-class ShiftResponsibility < ApplicationRecord
+class ShiftAssignment < ApplicationRecord
   belongs_to :shift
-  belongs_to :responsibility
+  belongs_to :assignment
 
   validates_presence_of :shift_id
-  validates_presence_of :responsibility_id
+  validates_presence_of :assignment_id
 
   before_create :validate_no_name
 
@@ -12,13 +12,13 @@ class ShiftResponsibility < ApplicationRecord
   before_save :is_shift_filled?
 
   def shifts
-    shift_responsibilities
+    shift_assignments
   end
 
 private
 
   def assign_name
-    self.name = responsibility.name
+    self.name = assignment.name
     self.save
   end
 

@@ -108,7 +108,7 @@ RSpec.describe User, type: :model do
 
       let(:error) { user.errors.messages[:worker_responsiblities].first }
 
-      context 'with no responsibility in the DB' do
+      context 'with no Assignment in the DB' do
         context 'and no responsibilities assigned' do
           let!(:user) { Fabricate(:user) }
           let(:resps) { nil }
@@ -118,13 +118,14 @@ RSpec.describe User, type: :model do
           end
         end
       end
-      context 'with a single Responsibility in the DB:' do
+
+      context 'with a single Assignment in the DB:' do
         describe 'a single responsibility assignation' do
           let!(:business) { Fabricate(:business) }
           let(:resps) { ['Barista'] }
           let!(:user) { Fabricate(:user) }
 
-          let(:create_responsibility) { Fabricate(:responsibility, name: 'Barista') }
+          let(:create_assignment) { Fabricate(:assignment, name: 'Barista') }
 
           let(:save_user_responsibility) do
             user.update(worker_responsibilities: resps)
@@ -142,23 +143,23 @@ RSpec.describe User, type: :model do
               Fabricate(:business_user, user: user, business: business)
             end
 
-            context '(linking to non-existant Responsibility)' do
+            context '(linking to non-existant Assignment)' do
 
               before { link_business }
 
-              it 'errors on non-existant responsibility' do
+              it 'errors on non-existant assignment' do
                 expect(save_user_responsibility).to eq(false)
                 expect(error).to eq(
-                  'Barista Responsibility does not exist in database'
+                  'Barista Assignment does not exist in database'
                 )
 
                 expect(user).to be_valid
               end
             end
 
-            context '(linking to existing Responsibility)' do
+            context '(linking to existing Assignment)' do
               before { link_business }
-              before { create_responsibility }
+              before { create_assignment }
 
               it 'user worker_responsiblity saves' do
                 expect(save_user_responsibility).to eq(true)
@@ -170,31 +171,31 @@ RSpec.describe User, type: :model do
         end
       end
 
-      context 'with multiple responsibilities in the DB' do
+      context 'with multiple assignments in the DB' do
         let!(:user) { Fabricate(:user_with_business) }
 
         before do
           3.times do |i|
-            Fabricate(:responsibility, name: %w(Barista Waiter Bartender)[i-1])
+            Fabricate(:assignment, name: %w(Barista Waiter Bartender)[i-1])
           end
         end
 
-        describe 'a single responsibility assignation' do
-          let(:responsibility) { Responsibility.last.name }
+        describe 'a single assignment assignation' do
+          let(:assignment) { Assignment.last.name }
 
-          let(:link_responsibility) do
-            user.worker_responsibilities << responsibility
+          let(:link_assignment) do
+            user.worker_responsibilities << assignment
             user.save
           end
 
           it 'can link using responsibilities' do
-            expect(link_responsibility).to eq(true)
+            expect(link_assignment).to eq(true)
             expect(user.worker_responsibilities.count).to eq(1)
-            expect(user.worker_responsibilities.first).to eq(responsibility)
+            expect(user.worker_responsibilities.first).to eq(assignment)
           end
         end
 
-        describe 'multiple responsibility assignations' do
+        describe 'multiple assignments assignations' do
           context 'made incorrectly' do
 
             before do
@@ -208,7 +209,7 @@ RSpec.describe User, type: :model do
               user.save
 
               expect(user.worker_responsibilities.count).to eq(2)
-              expect(error).to eq('Janitor Responsibility does not exist in database')
+              expect(error).to eq('Janitor Assignment does not exist in database')
             end
           end
 
