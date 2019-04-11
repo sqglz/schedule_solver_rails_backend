@@ -1,5 +1,5 @@
 class ShiftPresenter < SimpleDelegator
-  attr_reader :start_time, :end_time, :name, :shifts, :start_day, :end_day
+  attr_reader :start, :end, :name, :shifts, :start_day, :end_day
 
   def initialize(shift)
     @name = shift.name

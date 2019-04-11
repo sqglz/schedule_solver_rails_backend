@@ -3,6 +3,7 @@ Fabricator(:shift) do
   name       Faker::Military.marines_rank
   start_time "2019-04-06 14:03:22"
   end_time   "2019-04-06 14:03:22"
+  schedule_id nil
 end
 
 Fabricator(:shift_with_assignments, from: :shift) do

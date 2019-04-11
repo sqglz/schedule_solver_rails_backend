@@ -1,11 +1,14 @@
-class Schedule
-  attr_reader   :default, :shifts
+class Schedule < ApplicationRecord
+  attr_reader   :default
 
   attr_accessor :monday, :tuesday, :wednesday,
                 :thursday, :friday, :saturday, :sunday
 
-  def initialize(shifts=nil, default=false)
-    @default = default
+  has_many :shifts
+
+  after_create :associate_shifts
+
+  def associate_shifts
     @monday = []
     @tuesday = []
     @wednesday = []
@@ -13,17 +16,30 @@ class Schedule
     @friday = []
     @saturday = []
     @sunday = []
-    @shifts = shifts
-    return true unless shifts
-    sync_shifts_to_week(shifts)
+    return true if shifts.empty?
+    sync_shifts_to_week
   end
 
-  def sync_shifts_to_week(shifts=@shifts)
+  def sync_shifts_to_week(input_shifts=shifts)
     shifts.each do |shift|
+      shift.update!(schedule_id: self.id)
       day = Date::DAYNAMES[shift.start_time.wday]
       add_shift_to_day(day, shift)
     end
+
     return "Shifts successfully synched. Schedule ready"
+  end
+
+  def display_full_shift
+    {
+      monday: monday,
+      tuesday: tuesday,
+      wednesday: wednesday,
+      thursday: thursday,
+      friday: friday,
+      saturday: saturday,
+      sunday: sunday     
+    }
   end
 
   private
