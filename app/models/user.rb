@@ -16,7 +16,7 @@ class User < ApplicationRecord
 
   before_save  :ensure_user_role
 
-  has_one :business_user
+  has_one :business_user, dependent: :destroy
   has_one :business, through: :business_user
 
   def role?
