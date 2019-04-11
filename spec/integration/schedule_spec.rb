@@ -5,18 +5,20 @@ RSpec.describe 'Schedule', type: :class  do
     describe 'initialization' do
       let(:schedule) { Schedule.new }
       let(:shifts) { Shift.all }
-      let(:schedule_with_shifts) { Schedule.new(shifts) }
+      let(:schedule_with_shifts) { Fabricate(:schedule_with_shifts) }
       # schedules initialize with each day as a class var
       it 'initializes with the days of the week
                 as class variables, attr accessible' do
           expect(schedule).to have_attributes(
-            :monday => [],
-            :tuesday => [],
-            :wednesday => [],
-            :thursday => [],
-            :friday => [],
-            :saturday => [],
-            :sunday => []
+            :owner_id => nil,
+            :default => false,
+            :monday => nil,
+            :tuesday => nil,
+            :wednesday => nil,
+            :thursday => nil,
+            :friday => nil,
+            :saturday => nil,
+            :sunday => nil
           )
       end
       context 'with Shifts, ShiftAssignments, and Users created' do

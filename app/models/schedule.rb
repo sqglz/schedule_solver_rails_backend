@@ -30,7 +30,7 @@ class Schedule < ApplicationRecord
     return "Shifts successfully synched. Schedule ready"
   end
 
-  def display_full_shift
+  def display_full_week
     {
       monday: monday,
       tuesday: tuesday,
@@ -38,7 +38,7 @@ class Schedule < ApplicationRecord
       thursday: thursday,
       friday: friday,
       saturday: saturday,
-      sunday: sunday     
+      sunday: sunday
     }
   end
 
