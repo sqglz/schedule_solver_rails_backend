@@ -1,3 +1,3 @@
 Fabricator(:assignment) do
-  name Faker::Military.air_force_rank
+  name %w(Waiter Waiter Waiter Backwait Backwait Bartender Hostess Bartender).sample
 end

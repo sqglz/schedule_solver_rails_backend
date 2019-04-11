@@ -24,8 +24,8 @@ Fabricator(:manager_with_schedule, from: :user) do
   user_role             2
 
   after_create do |user|
-    owner = Fabricate(:user_with_business)
     business = Business.last
+    owner = Fabricate(:user_with_business, business: business)
 
     Fabricate(:business_user, user: user, business: business)
 
@@ -36,12 +36,6 @@ Fabricator(:manager_with_schedule, from: :user) do
 
     schedule = Fabricate(:schedule, owner_id: owner.id, default: true)
 
-    3.times do
-      Fabricate(
-        :shift_with_assignments,
-        business: business,
-        schedule_id: schedule.id
-      )
-    end
+    Shift.all.update(schedule_id: schedule.id)
   end
 end

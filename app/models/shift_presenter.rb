@@ -1,6 +1,5 @@
-class ShiftPresenter < SimpleDelegator
-  attr_reader :end, :name, :shifts, :start,
-              :start_day, :end_day, :filled
+class ShiftPresenter
+  attr_reader :name, :start_day, :end_day, :start, :end, :shifts, :filled
 
   def initialize(shift)
     @name = shift.name
@@ -8,7 +7,7 @@ class ShiftPresenter < SimpleDelegator
     @end_day = Date::DAYNAMES[shift.end_time.wday]
     @start = shift.start_time.strftime('%H:%M:%S')
     @end = shift.end_time.strftime('%H:%M:%S')
-    @shifts = shift.shifts
+    @shifts = shift.shifts.to_a
     @filled = shift.filled?
   end
 end

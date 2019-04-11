@@ -21,6 +21,7 @@ class Scheduler
     @default    = schedule.default
     @shifts     = nil
     @day        = day
+    associate_shifts
   end
 
   def associate_shifts
