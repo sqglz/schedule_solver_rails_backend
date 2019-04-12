@@ -14,3 +14,20 @@ Fabricator(:shift_with_assignments, from: :shift) do
     end
   end
 end
+
+Shift.all.each do |s|
+  ass = Assignment.order('RANDOM()').first
+  2.times do
+    ShiftAssignment.create(
+      shift_id: s.id,
+      assignment_id: ass.id
+    )
+  end
+  ass = Assignment.order('RANDOM()').first
+  2.times do
+    ShiftAssignment.create(
+      shift_id: s.id,
+      assignment_id: ass.id
+    )
+  end
+end

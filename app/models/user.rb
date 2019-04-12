@@ -1,7 +1,7 @@
 class User < ApplicationRecord
   has_secure_password
 
-  # validates :email, presence: true, uniqueness: true
+  validates :email, presence: true, uniqueness: true
   validates :first_name, length: { maximum: 40 }
   validates :last_name, length: { maximum: 80 }
   validates :password, length: { minimum: 10 }
@@ -15,6 +15,7 @@ class User < ApplicationRecord
   after_create :create_username
 
   before_save  :ensure_user_role
+  validate     :check_worker_status
 
   has_one :business_user, dependent: :destroy
   has_one :business, through: :business_user
@@ -71,6 +72,13 @@ private
       end
     else
       errors.add(:worker_responsiblities, "User does not belong to a business!")
+    end
+  end
+
+  def check_worker_status
+    return true unless user_role == 'worker'
+    if !employment_start_date
+      errors.add(:employment_start_date, "Must include an employment start date for worker!")
     end
   end
 end
