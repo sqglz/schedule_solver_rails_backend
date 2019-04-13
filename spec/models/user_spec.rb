@@ -103,7 +103,7 @@ RSpec.describe User, type: :model do
     end
   end
 
-  describe 'worker_responsibilities' do
+  describe 'ponsibilities' do
     context 'when a user is created' do
 
       let(:error) { user.errors.messages[:worker_responsiblities].first }
