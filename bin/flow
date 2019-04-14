@@ -1,0 +1,59 @@
+
+
+
+      UX flow chart
+
+      **(MANAGER)**
+
+      LOGS_IN --> User authentication -> __unmade__
+
+      CREATES_SCHEDULE
+       ---------                          -------------
+      |  click  | -> creates_schedule -> |  week view  |
+       ---------                          -------------
+          \+/                             M T W R F S Su
+           |
+           V
+       -------------      [Shift.new()]      -------------------
+      |  click day  | ->  creates_shift  -> |  start; end; name |
+       -------------                         -------------------
+                                                    \+/                   [Assignment.new()]
+                                                     |                    If not in system make
+                                                     V                    ------------
+            /-------->----->- -<-----<--------   ask what                   ^
+            |       (repeat) |  (repeat)          shift positions            |
+            |                V                    available?                 |
+       -------------                         ----------------------------    |
+      |  c <-  creates_shift_assignment  <- | waiter;backwait;bartender? | --\
+       -------------                         ----------------------------
+       [ShiftAssignment.new(shift_id: shift.id)]
+                                                   \+/
+                                                    |   ( DONE? )
+                                                    V
+                                                    ----------------                            ------------------
+                                                   |  click create  | ->  await preferences  -> | ! S:O:L:V:E:R ! |
+                                                   |    schedule    |        ...........        |(can be run any time... )
+                                                    ----------------                            |(... so long as (all) shift_assignments user_id is cleared first )
+                                                                                                -----------------
+
+========================================================================================================================
+
+      **(WORKER)**
+
+      LOGS_IN --> User authentication -> __unmade__
+
+      CREATES DEFAULT AVAILABILITY   --> __unmade__  --> stored by day in array on user cant_work_days:   ['Monday', 'Tuesday']
+                                                                                        cant_work_shifts: ['Lunch']
+      ---------                                  --------------
+     |  click  | -> views_upcoming_schedule -> |   week view    |
+      ---------                                  --------------
+         \+/                                     M T W R F S Su
+          |
+          V
+      -------------                                     ---------------------------------
+     |  click day  | ->  creates_shift_preference  -> |  preferred;available;unavailable'|
+      -------------                                     ---------------------------------
+         \+/             [ShiftPreference.new()]
+          |
+
+      CAN CHANGE AVAILABILITY UP TO X DAYS IN ADVANCE

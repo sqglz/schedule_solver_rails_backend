@@ -1,9 +1,9 @@
 Fabricator(:user) do
-  email                 Faker::Internet.unique.email(Faker::FunnyName.unique.two_word_name, '+')
+  email                 { Faker::Internet.unique.email(Faker::FunnyName.unique.two_word_name, '+') }
   password              'right_Password123'
   password_confirmation 'right_Password123'
-  first_name            Faker::Artist.name
-  last_name             Faker::Name.last_name
+  first_name            { Faker::Artist.name }
+  last_name             { Faker::Name.last_name }
   user_role             0
 end
 

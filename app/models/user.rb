@@ -1,10 +1,13 @@
 class User < ApplicationRecord
   has_secure_password
 
+  JOB_PREFERENCE_ORDER = ['Bartender', 'Waiter', 'Backwait'].freeze
+
   validates :email, presence: true, uniqueness: true
   validates :first_name, length: { maximum: 40 }
   validates :last_name, length: { maximum: 80 }
-  validates :password, length: { minimum: 10 }
+  # length here cant be measured in a validation as password = nil after password digest algorithm is ran
+  # validates :password, length: { minimum: 10 }
 
   enum user_role: [ :user, :worker, :manager, :owner, :admin ]
 
@@ -12,13 +15,18 @@ class User < ApplicationRecord
   validate :validate_email_format
   validate :responsibility_exists?, if: :will_save_change_to_worker_responsibilities?
 
+
+  before_save :order_responsibilities, if: :will_save_change_to_worker_responsibilities?
+  before_save :ensure_user_role
+
   after_create :create_username
 
-  before_save  :ensure_user_role
   validate     :check_worker_status
 
   has_one :business_user, dependent: :destroy
   has_one :business, through: :business_user
+
+  has_many :shift_preferences
 
   def role?
     user_role
@@ -34,6 +42,16 @@ private
     end
 
     return no_records.empty? ? true : add_responsibility_errors(no_records)
+  end
+
+  def order_responsibilities
+    ordered_resp = []
+    JOB_PREFERENCE_ORDER.each do |jb|
+      if worker_responsibilities.include?(jb)
+        ordered_resp << jb
+      end
+    end
+    self.worker_responsibilities = ordered_resp
   end
 
   def ensure_user_role
@@ -68,10 +86,10 @@ private
     if resp_names
       resp_names.each do |resp_name|
         self.worker_responsibilities.delete(resp_name)
-        errors.add(:worker_responsiblities, "#{resp_name} Assignment does not exist in database")
+        errors.add(:worker_responsibilities, "#{resp_name} Assignment does not exist in database")
       end
     else
-      errors.add(:worker_responsiblities, "User does not belong to a business!")
+      errors.add(:worker_responsibilities, "User does not belong to a business!")
     end
   end
 

@@ -3,6 +3,7 @@ class Shift < ApplicationRecord
 
   has_many :shift_assignments, dependent: :destroy
   has_many :assignments, through: :shift_assignments
+  has_many :shift_preferences, dependent: :destroy
 
   def shifts
     shift_assignments
@@ -10,6 +11,10 @@ class Shift < ApplicationRecord
 
   def filled?
     !shifts.pluck(:assigned).include?(false)
+  end
+
+  def is_working_shift?(employee)
+    shifts.pluck(:user_id).include?(employee.id)
   end
 
   def unfilled_assignments
