@@ -13,7 +13,7 @@ class ApplicationController < ActionController::Base
   private
 
   def safe_user_params
-    params.require(:user).permit(:user_id, :first_name, :last_name, :password, :password_confirmation, :email, :employment_start_date)
+    params.require(:user).permit(:user_id, :first_name, :username, :last_name, :password, :email, :employment_start_date)
   end
 
   def safe_business_params
