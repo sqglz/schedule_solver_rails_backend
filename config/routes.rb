@@ -3,7 +3,8 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :shifts
       resources :schedules
-      resources :users, only: [:create, :edit, :destroy, :update]
+      resources :users, only: [:index, :create, :edit, :destroy, :update]
+      post 'login', to: 'sessions#log_in'
     end
   end
 end

@@ -32,6 +32,14 @@ class User < ApplicationRecord
     user_role
   end
 
+  def days_employed
+    if !self.employment_start_date
+      nil
+    else
+      (DateTime.now.to_date - self.employment_start_date&.to_date).to_i
+    end
+  end
+
 private
 
   def responsibility_exists?
